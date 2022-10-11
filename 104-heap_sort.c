@@ -1,70 +1,65 @@
 #include "sort.h"
+
 /**
- * check_tree - swiftdown check
- * @array: pointer to array
- * @size: size of the pointer
- * @size_init: original size of the array
- * @i: index as a root of the tree
- *
-**/
-void check_tree(int *array, size_t size_init, size_t size, size_t i)
+ * swap_root - A function that swap the root nodes.
+ * @array: The heap to sort.
+ * @root: The root of the heap.
+ * @hi: The higher index.
+ * @size: The size of the array.
+ * Return: Nothing
+ */
+void swap_root(int *array, size_t root, size_t hi, size_t size)
 {
+	size_t lo = 0, mi = 0, tmp = 0;
+	int aux = 0;
 
-	int n, branch1, branch2;
-	size_t br1, br2;
-
-	br1 = i * 2 + 1;
-	br2 = br1 + 1;
-	branch1 = array[br1];
-	branch2 = array[br2];
-	if (((br1 < size) && (br2 < size) &&
-		(branch1 >= branch2 && branch1 > array[i]))
-		|| ((br1 == size - 1) && branch1 > array[i]))
+	while ((lo = (2 * root + 1)) <= hi)
 	{
-		n = array[i];
-		array[i] = branch1;
-		array[br1] = n;
-		print_array(array, size_init);
+		tmp = root;
+		mi = lo + 1;
+		if (array[tmp] < array[lo])
+			tmp = lo;
+		if (mi <= hi && array[tmp] < array[mi])
+			tmp = mi;
+		if (tmp == root)
+			return;
+		aux = array[root];
+		array[root] = array[tmp];
+		array[tmp] = aux;
+		print_array(array, size);
+		root = tmp;
 	}
-	else if ((br1 < size) && (br2 < size) &&
-		(branch2 > branch1 && branch2 > array[i]))
-	{
-		n = array[i];
-		array[i] = branch2;
-		array[br2] = n;
-		print_array(array, size_init);
-	}
-	if (br1 < size - 1)
-		check_tree(array, size_init, size, br1);
-	if (br2 < size - 1)
-		check_tree(array, size_init, size, br2);
 }
+
 /**
- * heap_sort - sorts an array of integers
- * in ascending order using the Heap
- * sort algorithm
- * @array: pointer to array
- * @size: size of the pointer
- *
-**/
+ * heap_sort - A function that sorts an array using heap algorithm.
+ * @array: An array to sort.
+ * @size: The size of the array.
+ * Return: Nothing.
+ */
 void heap_sort(int *array, size_t size)
 {
-	size_t i, size_init = size;
-	int n;
+	size_t hi = 0, gap = 0;
+	int tmp = 0;
 
-	if (!array)
-		return;
-	for (i = 0; i < size / 2 ; i++)
-	{
-		check_tree(array, size_init, size, size / 2 - 1 - i);
-	}
-	for (i = 0; i < size_init - 1; i++)
-	{
-		n = array[0];
-		array[0] = array[size - 1 - i];
-		array[size - 1 - i] = n;
-		print_array(array, size_init);
-		check_tree(array, size_init, size - i - 1, 0);
-	}
+		if (array == NULL || size < 2)
+			return;
 
+		for (gap = (size - 2) / 2; 1; gap--)
+		{
+			swap_root(array, gap, size - 1, size);
+			if (gap == 0)
+				break;
+		}
+
+		hi = size - 1;
+		while (hi > 0)
+	{
+		tmp = array[hi];
+		array[hi] = array[0];
+		array[0] = tmp;
+		print_array(array, size);
+		hi--;
+		swap_root(array, 0, hi, size);
+	}
 }
